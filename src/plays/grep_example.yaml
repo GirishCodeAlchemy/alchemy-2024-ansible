@@ -9,4 +9,8 @@
 
     - name: Print
       debug:
-        msg: "{{ inventory_hostname }}: '{{ grep_output.stdout }}'"
+        msg: "{{ inventory_hostname }}: '{{ grep_output.stdout.split('\n') }}'"
+
+    - name: List Print
+      debug:
+        msg: "{{ grep_output.stdout.split('\n') }}"
