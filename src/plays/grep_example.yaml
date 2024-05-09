@@ -1,0 +1,12 @@
+- hosts: localhost
+  tasks:
+    - name: get value
+      shell:
+        cmd: grep -i root /etc/passwd
+      register: grep_output
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Print
+      debug:
+        msg: "{{ inventory_hostname }}: '{{ grep_output.stdout }}'"
