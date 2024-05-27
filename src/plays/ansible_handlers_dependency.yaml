@@ -1,0 +1,9 @@
+# One task in depending on another task. once task-1 is executed notify task-2 to perform its action
+- hosts: localhost
+  task:
+    - name: Installing httpd
+      yum: name=httpd state=present
+      notify: restarting httpd
+  handlers:
+    - name: restarting httpd
+      service: name=httpd state=started
