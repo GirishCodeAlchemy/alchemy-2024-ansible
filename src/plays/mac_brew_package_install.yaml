@@ -4,42 +4,44 @@
   become: false
   vars:
     brew_cask_packages:
-      - docker
-      - google-chrome
-      - iterm2
-      - visual-studio-code
+      # - docker
+      # - google-chrome
+      # - iterm2
+      # - visual-studio-code
+      - slack
+      - zoom
     brew_packages:
-      - autoconf
-      - bash-completion
+      # - autoconf
+      # - bash-completion
       # - boot2docker
       # - consul
-      - docker-compose
-      - docker-machine
+      # - docker-compose
+      # - docker-machine
       # - doxygen
-      - git
-      - git-lfs
-      - go
+      # - git
+      # - git-lfs
+      # - go
       - jq
       # - nmap
       # - nomad
       # - openssl
       # - packer
       - pyenv
-      - python
-      - ssh-copy-id
-      - terraform
-      - terraform-inventory
-      - terraform-provisioner-ansible
+      # - python
+      # - ssh-copy-id
+      # - terraform
+      # - terraform-inventory
+      # - terraform-provisioner-ansible
       - tmux
       - tree
       # - vault
       - wget
-      - zsh
-      - zsh-syntax-highlighting
+      # - zsh
+      # - zsh-syntax-highlighting
     install_homebrew_if_missing: false
-    # python_modules:
+    python_modules:
     #   - configparser
-    #   - pylint
+      - pylint
     #   - virtualenv
     upgrade_homebrew_packages: false
 
@@ -75,23 +77,52 @@
       until: result is successful
       when: homebrew_check.stat.exists
 
-    - name: Installing Homebrew Cask Packages
-      homebrew_cask:
-        name: "{{ brew_cask_packages }}"
-        state: present
-      register: result
-      until: result is successful
-      when: homebrew_check.stat.exists
+    - name: Check and Install Homebrew Cask Packages
+      block:
+        - name: Check if Homebrew Cask package is installed
+          command: brew list --cask "{{ item }}"
+          register: cask_check
+          failed_when: false
+          changed_when: false
+          with_items: "{{ brew_cask_packages }}"
 
-    - name: Installing Homebrew Packages
-      homebrew:
-        name: "{{ brew_packages }}"
-        state: present
-      register: result
-      until: result is successful
-      when: homebrew_check.stat.exists
-    # - name: Installing Python Modules
-    #   pip:
-    #     name: "{{ item }}"
-    #     state: present
-    #   with_items: '{{ python_modules }}'
+        - name: Install Homebrew Cask packages
+          homebrew_cask:
+            name: "{{ item }}"
+            state: present
+          with_items: "{{ brew_cask_packages }}"
+          when: item not in cask_check.results | map(attribute='stdout') | join(' ')
+
+    - name: Check and Install Homebrew Packages
+      block:
+        - name: Check if Homebrew package is installed
+          command: brew list "{{ item }}"
+          register: brew_check
+          failed_when: false
+          changed_when: false
+          with_items: "{{ brew_packages }}"
+
+        - name: Install Homebrew packages
+          homebrew:
+            name: "{{ item }}"
+            state: present
+          with_items: "{{ brew_packages }}"
+          when: item not in brew_check.results | map(attribute='stdout') | join(' ')
+
+    - name: Check and Install Python Modules
+      block:
+        - name: Check if Python module is installed
+          pip:
+            name: "{{ item }}"
+            state: present
+          register: python_check
+          failed_when: false
+          changed_when: false
+          with_items: "{{ python_modules }}"
+
+        - name: Install Python modules
+          pip:
+            name: "{{ item }}"
+            state: present
+          with_items: "{{ python_modules }}"
+          when: item not in python_check.results | map(attribute='name') | join(' ')
