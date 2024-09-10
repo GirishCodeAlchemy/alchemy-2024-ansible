@@ -1,0 +1,23 @@
+{% set start_node_id_controller = 1 %}
+{% set start_node_id = 1001 %}
+
+# Define the node ID for each host
+node.id={{ start_node_id + kraft_controller_list.index(inventory_hostname) if inventory_hostname in kraft_controller_list else '' }}
+
+# Set the quorum voters
+controller.quorum.voters={% for controller_host in kraft_controller_list %}
+    {{ start_node_id_controller + loop.index0 }}@{{ controller_host }}:{{ kafka_controller_port }}
+    {% if not loop.last %},{% endif %}
+{% endfor %}{{''}}
+
+
+
+# Advertise listeners
+advertised.listeners=CLIENT://{{ inventory_hostname }}:{{ kafka_client_port }},
+                    CONTROLLER://{{ inventory_hostname }}:{{ kafka_controller_port }},
+                    INTERNAL://{{ inventory_hostname }}:{{ kafka_internal_port }},
+                    REPLICATION://{{ inventory_hostname }}:{{ kafka_replication_port }},
+                    TOKEN://{{ inventory_hostname }}:{{ kafka_token_port }}
+
+
+hostname = {{ inventory_hostname }}

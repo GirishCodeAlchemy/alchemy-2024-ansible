@@ -1,0 +1,20 @@
+---
+- name: Render Jinja2 template
+  hosts: localhost
+  vars:
+    kraft_controller_list:
+      - controller1.example.com
+      - controller2.example.com
+      - controller3.example.com
+      - localhost
+    kafka_controller_port: 9092
+    kafka_client_port: 9093
+    kafka_internal_port: 9094
+    kafka_replication_port: 9095
+    kafka_token_port: 9096
+  tasks:
+    - name: Render the configuration file from template
+      template:
+        src: ../templates/kafka_config.j2
+        dest: server.properties
+        # dest: /etc/kafka/server.properties
