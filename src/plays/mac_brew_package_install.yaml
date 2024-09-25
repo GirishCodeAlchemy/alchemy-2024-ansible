@@ -34,9 +34,10 @@
       # - terraform-provisioner-ansible
       - tmux
       - tree
-      # - vault
+      - fzf
       - wget
       - btop
+      - tldr
       # - zsh
       # - zsh-syntax-highlighting
     install_homebrew_if_missing: false
