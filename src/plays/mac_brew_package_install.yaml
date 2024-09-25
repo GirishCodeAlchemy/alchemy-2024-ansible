@@ -36,6 +36,7 @@
       - tree
       # - vault
       - wget
+      - btop
       # - zsh
       # - zsh-syntax-highlighting
     install_homebrew_if_missing: false
