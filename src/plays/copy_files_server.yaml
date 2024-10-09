@@ -1,0 +1,20 @@
+- name: "Copy the files"
+	hosts: kafka
+	become: false
+	gather_facts: true
+	vars:
+		key: "{{ groups['kafka'][0] }}"
+	tasks:
+		- name: "Remove the old file"
+			file:
+				path: "/opt/confluent/testfile"
+				state: absent
+		- name: "Copy File"
+			copy:
+				src: "/home/src/testfile"
+				dest: "/opt/confluent/testfile"
+				owner: confluent
+				group: confluent
+				mode: 0600
+				
+		
