@@ -1,0 +1,20 @@
+- hosts: all
+  #become_user: root
+  #become_method: sudo
+  #sudo: yes
+  name: Get cec id from user
+  vars_prompt:
+  - name: username
+    prompt: Please enter your id
+    private: no
+
+  tasks:
+  - name: Create a login user
+    #become_user: root
+    user:
+      name: "{{ username }}"
+      password: '$6asQOJRqB1i2'
+      groups:
+       - docker
+       - wheel
+      state: present
