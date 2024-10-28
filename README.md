@@ -20,3 +20,4 @@ Autocomplete add it in profile or zshrc
     eval $(register-python-argcomplete ansible-pull)
     eval $(register-python-argcomplete ansible-vault)
 ```
+![image](https://github.com/user-attachments/assets/3c553d71-955a-4fde-98f8-5b5f65ca963a)
