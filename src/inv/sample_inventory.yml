@@ -1,0 +1,15 @@
+---
+all:
+  children:
+    webservers:
+      hosts:
+        webserver1.example.com:
+        webserver2.example.com:
+    databases:
+      hosts:
+        dbserver1.example.com:
+        dbserver2.example.com:
+    loadbalancers:
+      hosts:
+        lbserver1.example.com:
+        lbserver2.example.com:
