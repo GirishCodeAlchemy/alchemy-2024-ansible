@@ -1,0 +1,117 @@
+- name: Test rest apis
+  hosts: localhost_group
+  gather_facts: false
+  vars:
+    github_base_url: "https://api.github.com"
+    # github_token:
+    github_token: "{{ lookup('env', 'GITHUB_WORK_OFFICE_TOKEN') }}"
+    github_owner: "{{ lookup('env', 'GITHUB_WORK_OFFICE_USER') }}"
+    pattern: "test-e"
+  tasks:
+    - name: Get all Repositories
+      uri:
+        url: "{{ github_base_url }}/user/repos"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ github_token }}"
+        # validate_certs: false
+        return_content: true
+      register: repos_response
+
+    - name: Parse Repositories JSON
+      set_fact:
+        repos: "{{ repos_response.json }}"
+
+    - name: Print all Repositories
+      debug:
+        var: repos
+
+    - name: Print Repo names
+      debug:
+        var: repos | map(attribute="name") | list
+
+    - name: Filter Repo Names Matching Pattern {{ pattern }}
+      set_fact:
+        repo_names: "{{ repos | selectattr('name', 'match', pattern) | map(attribute='name') | list }}"
+
+    - name: Print Matched Repo Names
+      debug:
+        var: repo_names
+
+    - name: Delete Matched Repositories
+      uri:
+        url: "{{ github_base_url }}/repos/{{ github_owner }}/{{ item }}"
+        method: DELETE
+        headers:
+          Authorization: "Bearer {{ github_token }}"
+        status_code: 204  # Expecting a 204 No Content response for successful deletion
+        # validate_certs: true
+      loop: "{{ repo_names }}"
+      register: deleted_repos
+
+    - name: Print Deleted Repositories
+      debug:
+        var: deleted_repos.results | map(attribute='item') | list
+
+    # - name: Get all users
+    #   uri:
+    #     url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #     method: GET
+    #     return_content: yes
+    #   register: users
+
+    # - name: Print users
+    #   debug:
+    #     var: users.json
+
+    # - name: Get user by id
+    #   uri:
+    #     url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #     method: GET
+    #     return_content: yes
+    #   register: user
+
+    # - name: Print user
+    #   debug:
+    #     var: user.json
+
+    # - name: Create user
+    #   uri:
+    #     url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #     method: POST
+    #     body_format: json
+    #     body:
+    #       name: "John Doe"
+    #       email: "john.doe@example.com"
+    #     return_content: yes
+    #   register: created_user
+
+    # - name: Print created user
+    #   debug:
+    #     var: created_user.json
+
+    # - name: Update user
+    #   uri:
+    #     url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #     method: PUT
+    #     body_format: json
+    #     body:
+    #       name: "John Doe"
+    #       email: "john.doe@example.com"
+    #     return_content: yes
+    #   register: updated_user
+
+    # - name: Print updated user
+    #   debug:
+    #     var: updated_user.json
+
+    # - name: Delete user
+    #   uri:
+    #     url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    #     method: DELETE
+    #     return_content: yes
+    #   register: deleted_user
+
+    # - name: Print deleted user
+    #   debug:
+    #     var: deleted_user.json

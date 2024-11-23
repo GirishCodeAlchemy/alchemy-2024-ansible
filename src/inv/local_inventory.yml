@@ -1,0 +1,15 @@
+---
+all:
+  children:
+    localhost_group:
+      vars:
+        env: dev
+      hosts:
+        localhost:
+          ansible_connection: local
+          # ansible_python_interpreter: /usr/bin/python3
+          # ansible_become: true
+          # ansible_become_method: sudo
+          # ansible_become_user: root
+          # ansible_become_password: "{{ vault_ansible_become_password }}"
+          # ansible_become_flags: '-i'
