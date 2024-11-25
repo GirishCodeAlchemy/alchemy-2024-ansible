@@ -38,7 +38,7 @@
       debug:
         var: repo_names
 
-    - name: Delete Matched Repositories
+    - name: Delete Matched Repositories. 
       uri:
         url: "{{ github_base_url }}/repos/{{ github_owner }}/{{ item }}"
         method: DELETE
