@@ -52,6 +52,7 @@
     - name: Print Deleted Repositories
       debug:
         var: deleted_repos.results | map(attribute='item') | list
+  
 
     # - name: Get all users
     #   uri:
