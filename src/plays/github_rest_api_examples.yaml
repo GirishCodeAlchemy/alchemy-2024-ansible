@@ -8,50 +8,68 @@
     github_owner: "{{ lookup('env', 'GITHUB_WORK_OFFICE_USER') }}"
     pattern: "test-e"
   tasks:
-    - name: Get all Repositories
-      uri:
-        url: "{{ github_base_url }}/user/repos"
-        method: GET
-        headers:
-          Authorization: "Bearer {{ github_token }}"
-        # validate_certs: false
-        return_content: true
-      register: repos_response
+    - name: Sample rest api example
+      block:
+        - name: Get all Repositories
+          uri:
+            url: "{{ github_base_url }}/user/repos"
+            method: GET
+            headers:
+              Authorization: "Bearer {{ github_token }}"
+            # validate_certs: false
+            return_content: true
+          register: repos_response
 
-    - name: Parse Repositories JSON
-      set_fact:
-        repos: "{{ repos_response.json }}"
+        - name: Parse Repositories JSON
+          set_fact:
+            repos: "{{ repos_response.json }}"
 
-    - name: Print all Repositories
-      debug:
-        var: repos
+        - name: Print all Repositories
+          debug:
+            var: repos
 
-    - name: Print Repo names
-      debug:
-        var: repos | map(attribute="name") | list
+        - name: Print Repo names
+          debug:
+            var: repos | map(attribute="name") | list
 
-    - name: Filter Repo Names Matching Pattern {{ pattern }}
-      set_fact:
-        repo_names: "{{ repos | selectattr('name', 'match', pattern) | map(attribute='name') | list }}"
+        - name: Filter Repo Names Matching Pattern {{ pattern }}
+          set_fact:
+            repo_names: "{{ repos | selectattr('name', 'match', pattern) | map(attribute='name') | list }}"
 
-    - name: Print Matched Repo Names
-      debug:
-        var: repo_names
+        - name: Print Matched Repo Names
+          debug:
+            var: repo_names
 
-    - name: Delete Matched Repositories. 
-      uri:
-        url: "{{ github_base_url }}/repos/{{ github_owner }}/{{ item }}"
-        method: DELETE
-        headers:
-          Authorization: "Bearer {{ github_token }}"
-        status_code: 204  # Expecting a 204 No Content response for successful deletion
-        # validate_certs: true
-      loop: "{{ repo_names }}"
-      register: deleted_repos
+        - name: Delete Matched Repositories. 
+          uri:
+            url: "{{ github_base_url }}/repos/{{ github_owner }}/{{ item }}"
+            method: DELETE
+            headers:
+              Authorization: "Bearer {{ github_token }}"
+            status_code: 204  # Expecting a 204 No Content response for successful deletion
+            # validate_certs: true
+          loop: "{{ repo_names }}"
+          register: deleted_repos
 
-    - name: Print Deleted Repositories
-      debug:
-        var: deleted_repos.results | map(attribute='item') | list
+        - name: Print Deleted Repositories
+          debug:
+            var: deleted_repos.results | map(attribute='item') | list
+
+        - name: "Passing Success task details"
+          set_fact:
+            status: "Success"
+            deleted_repos: "{{ deleted_repos.results | map(attribute='item') | list }}"
+            status_message: "Successfully deleted the repos."
+
+      rescue:
+        - name: "Construct error message"
+          set_fact:
+            status: "Failure"
+            status_message: "Error while running ansible playbook"
+
+
+
+    
   
 
     # - name: Get all users
