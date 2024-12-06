@@ -61,12 +61,25 @@
             deleted_repos: "{{ deleted_repos.results | map(attribute='item') | list }}"
             status_message: "Successfully deleted the repos."
 
+        - name: send response
+          set_stats:
+            data:
+              status: "{{ status }}"
+              repos: "{{ deleted_repos }}"
+              status_message: "{{ status_message }}"
+            aggregate: yes
       rescue:
         - name: "Construct error message"
           set_fact:
             status: "Failure"
             status_message: "Error while running ansible playbook"
 
+        - name: "Pass varss to another playbook"
+          set_stats:
+            data:
+              status: "{{ status }}"
+              status_message: "{{ status_message }}"
+            aggregate: yes
 
 
     
