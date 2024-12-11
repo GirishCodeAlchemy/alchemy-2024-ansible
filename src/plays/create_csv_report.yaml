@@ -1,0 +1,23 @@
+---
+- name: Create a CSV file
+  hosts: all
+  connection: network_cli
+  gather_facts: true
+
+  vars:
+    filename: "fact_report.csv"
+
+  tasks:
+    - name: Create CSV file and add header
+      lineinfile:
+        dest: "{{ filename }}"
+        line: "net_hostname,net_system,net_version"
+        create: yes
+        state: present
+      run_once: true
+
+    - name: Write CSV rows
+      lineinfile:
+        insertafter: EOF
+        dest: "{{ filename }}"
+        line: "{{ ansible_facts.net_hostname }},{{ ansible_facts.net_system }},{{ ansible_facts.net_version }}"
