@@ -40,7 +40,7 @@
           debug:
             var: repo_names
 
-        - name: Delete Matched Repositories. 
+        - name: Delete Matched Repositories.
           uri:
             url: "{{ github_base_url }}/repos/{{ github_owner }}/{{ item }}"
             method: DELETE
@@ -65,7 +65,8 @@
           set_stats:
             data:
               status: "{{ status }}"
-              repos: "{{ deleted_repos }}"
+              # repos: "{{ deleted_repos }}"
+              repos: "tesr"
               status_message: "{{ status_message }}"
             aggregate: yes
       rescue:
@@ -78,6 +79,7 @@
           set_stats:
             data:
               status: "{{ status }}"
+              repos: "None"
               status_message: "{{ status_message }}"
             aggregate: yes
 

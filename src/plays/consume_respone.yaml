@@ -1,0 +1,20 @@
+- name: Consume Response from Previous Playbook
+  hosts: localhost_group
+  gather_facts: false
+  tasks:
+    - name: Print the Passed Variables
+      debug:
+        msg:
+          - "Status: {{ ansible_stat.status }}"
+          - "Deleted Repositories: {{ ansible_stat.repos }}"
+          - "Status Message: {{ ansible_stat.status_message }}"
+
+    - name: Save Response to File
+      copy:
+        content: |
+          {
+            "status": "{{ status }}",
+            "repos": "{{ deleted_repos }}",
+            "status_message": "{{ status_message }}"
+          }
+        dest: api_response.json
