@@ -10,6 +10,7 @@
       # - visual-studio-code
       - slack
       - zoom
+      - google-cloud-sdk
     brew_packages:
       # - autoconf
       # - bash-completion
@@ -21,7 +22,11 @@
       # - git
       # - git-lfs
       # - go
+      - isort
+      - fzf
       - jq
+      # - java11
+      # - jenv
       # - nmap
       # - nomad
       # - openssl
@@ -38,6 +43,11 @@
       - wget
       - btop
       - tldr
+      - stern
+      # - podman-desktop
+      - podman
+      # - astro
+      # - kubectx
       # - zsh
       # - zsh-syntax-highlighting
     install_homebrew_if_missing: false
