@@ -10,7 +10,10 @@
     ansible.builtin.shell: >
       source {{ ansible_env.HOME }}/.nvm/nvm.sh &&
       nvm install --lts &&
+      nvm install --latest-npm &&
       nvm alias default 'lts/*'
+      # nvm use v21.7.2
+      # nvm alias default v21.7.2
     args:
       executable: /bin/bash  # Ensure the command runs in a bash shell
     environment:
